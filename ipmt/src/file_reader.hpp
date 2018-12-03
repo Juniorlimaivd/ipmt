@@ -72,6 +72,10 @@ public:
         this->openFile();
         
         _bytesRead = read(_fileDescriptor, _buffer, BUFFER_SIZE);
+        if(_bytesRead == 0){
+            printf("Error: file '%s' is empty.\n", this->_filename.c_str());
+            exit(-1);
+        }
 
         this->_linePointer = this->_buffer - 1;
 
