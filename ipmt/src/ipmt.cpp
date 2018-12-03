@@ -204,9 +204,9 @@ int main(int argc, char *argv[])
                   case 'h':
                   
                         printf("Usage: $ pmt [options] pattern textfile [textfile...]\n");
-                        printf("-a, --algorithm [algorithm_name]\n\t[boyer-moore]\n\t[aho-corasick]\n\t[sellers]\n\t[wu-manber]\n"
+                        printf("-a, --algorithm [algorithm_name]\n\t[suffix-tree]\n\t[suffix-array]\n"
                               "-c, --count\n"
-                              "-l, --compression algorithm [compression_algorithm_name]\n"
+                              "-l, --compression algorithm [compression_algorithm_name]\n\t[lz77]\n\t[lz78]\n"
                               "-h, --help\n"
                               "-p, --pattern [pattern_file]\n");
                         exit(0);
