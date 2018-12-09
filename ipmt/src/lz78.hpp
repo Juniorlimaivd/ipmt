@@ -1,6 +1,6 @@
 /**
  * @file lz78.hpp
- * @author Julia Feitosa (midxfc@cin.ufpe.br)
+ * @author Julia Feitosa (mjfc@cin.ufpe.br)
  * @brief LZ78 is responsible for implementing the LZ78_Compress and LZ78_Decompress methods
  * @version 0.1
  * @date 2018-11-26
