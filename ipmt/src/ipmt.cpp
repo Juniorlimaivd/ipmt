@@ -51,7 +51,7 @@ LZ78 lz78;
 cout<<"BuildIndex\n";
 for(string textname : info.textFiles) {
   cout << "File is " << textname << endl;
-  std::string compressedFileName = lz78.ParseFileName(textname, COMPRESSED_QUALIFIER);
+  std::string compressedFileName = lz78.ParseFileName(textname, "");
   std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
 
   lz78.Compress(textname, compressedFileName); 
@@ -178,7 +178,6 @@ int main(int argc, char *argv[])
                   case 'i':                  
                         indexMode = true;
                         info.textFiles.push_back(string(optarg));
-                        cout << optarg;
                   break;
 
                   case 's':                  
