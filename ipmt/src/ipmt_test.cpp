@@ -20,8 +20,8 @@ enum Algorithm
 
 enum Compress
 {
-      INVALID,
-      lz78
+      LZ77,
+      LZ78,
 };
 
 
@@ -32,7 +32,7 @@ typedef struct RunInfo {
       bool isExact;
       bool isCountMode;
       Algorithm chosenAlgorithm;
-	Compress chosenCompress;
+			Compress chosenCompress;
 
 } RunInfo;
 
@@ -53,27 +53,11 @@ vector<string> parserPatternFile(string filename){
             }
             ret = f.getLine(line);
       } while(ret != -1);
-      return p;
 }
 
 Algorithm chooseAlgorithm(RunInfo info) {
 		return SUFFIX_ARRAY;
 }
-void testCompression (RunInfo info){
-
-LZ78 lz78;
-
-for(string textname : info.textFiles) {
-  std::string compressedFileName = lz78.ParseFileName(textname, COMPRESSED_QUALIFIER);
-  std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
-
-  lz78.Compress(textname, compressedFileName); 
-  lz78.Decompress(compressedFileName, uncompressedFileName);         
-
-}
-
-}
-
 
 void executeAlgorithm(RunInfo info){
 
@@ -84,6 +68,7 @@ void executeAlgorithm(RunInfo info){
             alph.push_back(char(i));
       }
 
+
       switch (info.chosenAlgorithm)
       {
             case SUFFIX_ARRAY:{
@@ -91,6 +76,20 @@ void executeAlgorithm(RunInfo info){
                   break;
             }
             case SUFFIX_TREE:{
+                  //s = new SuffixTree(info.patterns, alph);
+                  break;
+            }
+
+            
+      }
+
+      switch (info.compress_type)
+      {
+            case LZ78:{
+                  
+                  break;
+            }
+            case LZ77:{
                   //s = new SuffixTree(info.patterns, alph);
                   break;
             }
@@ -156,16 +155,14 @@ void executeAlgorithm(RunInfo info){
 int main(int argc, char *argv[])
 {
       vector<string> pmt_algorithms = {"suffix-array", "suffix-tree"};
-	vector<string> pmt_compress = {"lz77", "lz78"};
+			vector<string> pmt_compress = {"lz77", "lz78"};
       int opt, opt_index; /* opt = value returned by the getopt_long function | opt_index = index of the chosen option, stored by the getopt_long function */
-      bool testMode = false;                  
       string algorithm, compress_type;
       RunInfo info;
       info.chosenAlgorithm = NONE;
       info.distance = -1;
       info.isCountMode = false;
       info.isExact = true;
-      info.chosenCompress = lz78;
       info.patterns.clear();
       info.textFiles.clear();
 
@@ -173,13 +170,13 @@ int main(int argc, char *argv[])
       static struct option long_options[]{
             {"algorithm", required_argument, 0, 'a'},
             {"count",     no_argument,       0, 'c'},
+            {"lz",      required_argument, 0, 'l'},
             {"help",      no_argument,       0, 'h'},
             {"pattern",   required_argument, 0, 'p'}, 
-            {"test",      no_argument,       0, 't'}, 
             {0, 0, 0, 0}
       };
 
-      while((opt = getopt_long(argc, argv, "a:l:cp:ht", long_options, &opt_index)) != -1){
+      while((opt = getopt_long(argc, argv, "a:l:cp:h", long_options, &opt_index)) != -1){
             switch(opt){
 
                   case 'a':
@@ -204,12 +201,28 @@ int main(int argc, char *argv[])
                         info.isCountMode = true;
                   break;
 
+                  
+                  case 'l':
+                        compress_type = optarg;
+                        
+                        for(int i=0; i < pmt_compress.size(); i++) {
+                              if (pmt_compress[i] == compress_type) {
+                                    info.chosenCompress = Compress(i+1);
+                              }      
+                        }
+
+                        if (info.chosenCompress == NONE) {
+                              printf("Invalid compression algorithm name.\n");
+                              exit(1);
+                        }          
+                  break;
 
                   case 'h':
                   
                         printf("Usage: $ pmt [options] pattern textfile [textfile...]\n");
                         printf("-a, --algorithm [algorithm_name]\n\t[suffix-tree]\n\t[suffix-array]\n"
                               "-c, --count\n"
+                              "-l, --compression algorithm [compression_algorithm_name]\n\t[lz77]\n\t[lz78]\n"
                               "-h, --help\n"
                               "-p, --pattern [pattern_file]\n");
                         exit(0);
@@ -218,10 +231,6 @@ int main(int argc, char *argv[])
 
                   case 'p':                  
                         info.patterns = parserPatternFile(optarg);                  
-                  break;
-
-                  case 't':
-                        testMode = true;
                   break;
 
                   case '?':
@@ -245,14 +254,8 @@ int main(int argc, char *argv[])
 
       for(; optind < argc; optind++) info.textFiles.push_back(argv[optind]);
 
-      if(testMode){
-            testCompression(info);
-      }
-      else{
-            executeAlgorithm(info);
 
-      }
-
+      executeAlgorithm(info);
 
       return 0;
 }
