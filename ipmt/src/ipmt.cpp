@@ -53,7 +53,7 @@ for(string textname : info.textFiles) {
   std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
 
   lz78.Compress(textname, compressedFileName); 
-  lz78.Decompress(compressedFileName, uncompressedFileName);         
+  //lz78.Decompress(compressedFileName, uncompressedFileName);         
 
 }
 
