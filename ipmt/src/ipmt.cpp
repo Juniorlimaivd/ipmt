@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include "file_reader.hpp"
 #include "searcher.hpp"
 #include "lz78.hpp"
 
@@ -38,28 +37,14 @@ typedef struct RunInfo {
 
 vector<string> parserPatternFile(string filename){
       vector<string> p;
-      FileReader f(filename);
-
-      string fullline, line;
-
-      int ret = f.getLine(line);
-      if (ret == -1) return p;
-
-      do {
-            fullline += line;
-            if (ret == 0){
-                  if (!fullline.empty()) p.push_back(fullline);
-                  fullline = "";
-            }
-            ret = f.getLine(line);
-      } while(ret != -1);
+      
       return p;
 }
 
 Algorithm chooseAlgorithm(RunInfo info) {
 		return SUFFIX_ARRAY;
 }
-void testCompression (RunInfo info){
+void BuildIndex (RunInfo info){
 
 LZ78 lz78;
 
@@ -102,13 +87,13 @@ void executeAlgorithm(RunInfo info){
       
       do {
             for(string textname : info.textFiles) {
-                  FileReader fr(textname);
+                  ifstream fr(textname);
 
                   std::stringstream fullline;
                   
                   string line;
 
-                  int ret = fr.getLine(line);
+                  int ret ;
                   if(ret == -1) continue;
 
                   int lineCount = 0;
@@ -132,7 +117,7 @@ void executeAlgorithm(RunInfo info){
                               countedLine = false;
                         }
 
-                        ret = fr.getLine(line);
+                        ret = 0;
 
                   } while(ret != -1);
 
@@ -159,7 +144,7 @@ int main(int argc, char *argv[])
       vector<string> pmt_algorithms = {"suffix-array", "suffix-tree"};
 	vector<string> pmt_compress = {"lz77", "lz78"};
       int opt, opt_index; /* opt = value returned by the getopt_long function | opt_index = index of the chosen option, stored by the getopt_long function */
-      bool indexMode = false;                  
+      bool indexMode = false, searchMode = false;                  
       string algorithm, compress_type;
       RunInfo info;
       info.chosenAlgorithm = SUFFIX_ARRAY;
@@ -193,6 +178,10 @@ int main(int argc, char *argv[])
                         indexMode = true;
                   break;
 
+                  case 's':                  
+                        searchMode = true;
+                  break;
+
 
                   case 'h':
                   
@@ -220,7 +209,7 @@ int main(int argc, char *argv[])
 
       }
 
-      if(!indexMode){
+      if(searchMode){
             int neededArgs = (info.patterns.empty()) ? 2 : 1;
 
             if (argc - optind < neededArgs) {
@@ -234,7 +223,7 @@ int main(int argc, char *argv[])
       for(; optind < argc; optind++) info.textFiles.push_back(argv[optind]);
 
       if(indexMode){
-            testCompression(info);
+            BuildIndex(info);
       }
       else{
             executeAlgorithm(info);
