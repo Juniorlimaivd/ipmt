@@ -64,6 +64,7 @@ void testCompression (RunInfo info){
 LZ78 lz78;
 
 for(string textname : info.textFiles) {
+  cout << "File is " << textname << endl;
   std::string compressedFileName = lz78.ParseFileName(textname, COMPRESSED_QUALIFIER);
   std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
 
@@ -158,10 +159,10 @@ int main(int argc, char *argv[])
       vector<string> pmt_algorithms = {"suffix-array", "suffix-tree"};
 	vector<string> pmt_compress = {"lz77", "lz78"};
       int opt, opt_index; /* opt = value returned by the getopt_long function | opt_index = index of the chosen option, stored by the getopt_long function */
-      bool testMode = false;                  
+      bool indexMode = false;                  
       string algorithm, compress_type;
       RunInfo info;
-      info.chosenAlgorithm = NONE;
+      info.chosenAlgorithm = SUFFIX_ARRAY;
       info.distance = -1;
       info.isCountMode = false;
       info.isExact = true;
@@ -171,44 +172,33 @@ int main(int argc, char *argv[])
 
       /* {long option name, argument, flag value, short option name} */
       static struct option long_options[]{
-            {"algorithm", required_argument, 0, 'a'},
             {"count",     no_argument,       0, 'c'},
+            {"index",     required_argument,       0, 'i'},
+            {"search",    required_argument,       0, 's'},
             {"help",      no_argument,       0, 'h'},
             {"pattern",   required_argument, 0, 'p'}, 
             {"test",      no_argument,       0, 't'}, 
             {0, 0, 0, 0}
       };
 
-      while((opt = getopt_long(argc, argv, "a:l:cp:ht", long_options, &opt_index)) != -1){
+      while((opt = getopt_long(argc, argv, "ci:s:hp:t", long_options, &opt_index)) != -1){
             switch(opt){
 
-                  case 'a':
-                  {
-                        algorithm = optarg;
-                        
-                        for(int i=0; i < pmt_algorithms.size(); i++) {
-                              if (pmt_algorithms[i] == algorithm) {
-                                    info.chosenAlgorithm = Algorithm(i+1);
-                              }      
-                        }
-
-                        if (info.chosenAlgorithm == NONE) {
-                              printf("Invalid algorithm name.\n");
-                              exit(1);
-                        }
-                  
-                  break;
-                  }
 
                   case 'c':                  
                         info.isCountMode = true;
                   break;
 
+                  case 'i':                  
+                        indexMode = true;
+                  break;
+
 
                   case 'h':
                   
-                        printf("Usage: $ pmt [options] pattern textfile [textfile...]\n");
-                        printf("-a, --algorithm [algorithm_name]\n\t[suffix-tree]\n\t[suffix-array]\n"
+                        printf("Usage: $ pmt mode [options]\n");
+                        printf("-i, --index textfile\n"
+                              "-s, --search pattern indexfile\n"
                               "-c, --count\n"
                               "-h, --help\n"
                               "-p, --pattern [pattern_file]\n");
@@ -218,10 +208,6 @@ int main(int argc, char *argv[])
 
                   case 'p':                  
                         info.patterns = parserPatternFile(optarg);                  
-                  break;
-
-                  case 't':
-                        testMode = true;
                   break;
 
                   case '?':
@@ -234,18 +220,20 @@ int main(int argc, char *argv[])
 
       }
 
-      int neededArgs = (info.patterns.empty()) ? 2 : 1;
+      if(!indexMode){
+            int neededArgs = (info.patterns.empty()) ? 2 : 1;
 
-      if (argc - optind < neededArgs) {
-            printf("Not enought arguments.\n");
-            exit(1);
+            if (argc - optind < neededArgs) {
+                  printf("Not enought arguments.\n");
+                  exit(1);
+            }
+
+            if(info.patterns.empty()) info.patterns.push_back(argv[optind++]);
       }
-
-      if(info.patterns.empty()) info.patterns.push_back(argv[optind++]);
 
       for(; optind < argc; optind++) info.textFiles.push_back(argv[optind]);
 
-      if(testMode){
+      if(indexMode){
             testCompression(info);
       }
       else{

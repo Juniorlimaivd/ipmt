@@ -58,7 +58,6 @@ public:
 
       std::ofstream out(filename.c_str());
       size_t dict_size = code.size();
-      out.write(reinterpret_cast<const char*>(&dict_size), sizeof(size_t));
 
       for(size_t i = 0; i < dict_size; ++i) {
         out.write(reinterpret_cast<const char*>(&code[i].first), sizeof(int));
@@ -68,7 +67,7 @@ public:
 }
 
     std::string LZ78_Decompress(const std::vector<std::pair<int, char>> &code) {
-      std::string txt;
+      std::string txt, nextWord;
       std::unordered_map<int, std::string> dict;
       int d = 1;
 
@@ -78,9 +77,9 @@ public:
         int dict_index = code[idx].first;
         char decoded_char = code[idx].second;
 
-        std::string next_entry = dict[dict_index] + decoded_char;
-        dict[d++] = next_entry;
-        txt += next_entry;
+        nextWord = dict[dict_index] + decoded_char;
+        dict[d++] = nextWord;
+        txt += nextWord;
       }
 
       return txt;
@@ -102,6 +101,11 @@ public:
           code->push_back(std::make_pair(dict[preffix], txt[i]));
           dict[preffix + txt[i]] = idx++;
           preffix.clear();
+        }
+
+        if(dict.size() >= 256){
+            dict.clear();
+            dict[""] = 0;
         }
     }
 
@@ -137,13 +141,10 @@ public:
       int dict_size, idx;
       char chr;
 
-      in.read(reinterpret_cast<char*>(&dict_size), sizeof(size_t));
 
       std::vector<std::pair<int, char>> code;
-      code.reserve(dict_size);
 
-      for(int i = 0; i < dict_size; ++i) {
-        
+      while(!in.eof()) {       
 
         in.read(reinterpret_cast<char*>(&idx), sizeof(int));
         in.read(&chr, sizeof(char));
