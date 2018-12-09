@@ -48,9 +48,7 @@ void BuildIndex (RunInfo info){
 
 LZ78 lz78;
 
-cout<<"BuildIndex\n";
 for(string textname : info.textFiles) {
-  cout << "File is " << textname << endl;
   std::string compressedFileName = lz78.ParseFileName(textname, "");
   std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
 
