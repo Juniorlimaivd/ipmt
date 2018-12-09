@@ -103,10 +103,7 @@ public:
           preffix.clear();
         }
 
-        if(dict.size() >= 256){
-            dict.clear();
-            dict[""] = 0;
-        }
+
     }
 
     }
