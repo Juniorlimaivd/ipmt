@@ -40,7 +40,7 @@ class LZ78 {
 
     void PrintDict(){
         for(int i=0; i<code.size(); i++){
-            std::cout << "<" << code[i].first << "," << code[i].second << "> \n";
+            std::cout << "<" << i+1 << " " << code[i].first << "," << code[i].second << "> \n";
         }
     }
 
@@ -100,8 +100,8 @@ class LZ78 {
     void LZ78_Compress(const std::string & txt) {
 
         std::unordered_map < std::string, int > dict;
-        std::string preffix;
-        int idx = 1;
+        std::string preffix, emp = "";
+        int idx = 1, codeWordForPreffix;
 
         dict[""] = 0;
 
@@ -110,11 +110,23 @@ class LZ78 {
             if (dict.find(preffix + txt[i]) != dict.end()) {
                 preffix += txt[i];
             } else {
-                code.push_back(std::make_pair(dict[preffix], txt[i]));
-                dict[preffix + txt[i]] = idx++;
-                preffix.clear();
+                if(preffix.empty()){
+                    codeWordForPreffix = 0;
+                }
+                else{
+                    codeWordForPreffix = dict[preffix];
+                }
+                 
+                 code.push_back(std::make_pair(codeWordForPreffix, txt[i]));
+                 dict[preffix + txt[i]] = idx++;
+                 preffix.clear();
+
             }
 
+        }
+        if(!preffix.empty())
+        {
+            code.push_back(std::make_pair(dict[preffix], emp[0]));
         }
 
 
