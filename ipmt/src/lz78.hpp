@@ -49,10 +49,9 @@ class LZ78 {
 
         std::ofstream out(filename.c_str());
         int dict_size = code.size();
-
+        out.write(reinterpret_cast < const char * > ( &dict_size), sizeof(int));
         for (int i = 0; i < dict_size; ++i) {
-            out.write(reinterpret_cast <
-                const char * > ( & code[i].first), sizeof(int));
+            out.write(reinterpret_cast < const char * > ( & code[i].first), sizeof(int));
             out.write( & code[i].second, sizeof(char));
         }
 
@@ -82,27 +81,37 @@ class LZ78 {
     }
 
     /**
-    * @brief Decompresses a given file. It restores the encoded structure
+    * @brief Decompresses a given file. It restores the encoded structure, it reads first the size of the encoded portion and then decodes it into text
     */
 
-    void Decompress(const std::string & input_filename, const std::string & output_filename) {
+    void Decompress(const std::string & input_filename, const std::string & output_filename, std::vector<std::string> data) {
 
         std::ifstream in (input_filename);
         std::ofstream out(output_filename);
 
-        std::string txt;
-        int dict_size, idx;
+        std::string txt, fulltxt;
+        int dict_size, idx, size;
         char chr;
 
         std::vector < std::pair < int, char >> code;
+        in .read(reinterpret_cast < char * > ( & size), sizeof(int)); 
 
         while (! in .eof()) {
+      
+            for(int i = 0; i < size; i++) {
+                in .read(reinterpret_cast < char * > ( & idx), sizeof(int)); 
+                in .read( & chr, sizeof(char));
+                code.push_back(std::make_pair(idx, chr));
+            }
+            txt = LZ78_Decompress();
+            fulltxt += txt;
+            data.push_back(txt);
+            in .read(reinterpret_cast < char * > ( & size), sizeof(int)); 
+            code.clear();
 
-            in .read(reinterpret_cast < char * > ( & idx), sizeof(int)); in .read( & chr, sizeof(char));
-            code.push_back(std::make_pair(idx, chr));
         }
-        txt = LZ78_Decompress();
-        out << txt;
+        
+        out << fulltxt;
     }
 
     /**
