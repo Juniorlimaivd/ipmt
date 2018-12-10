@@ -19,17 +19,15 @@ int GetFileSize(std::string fileName){
     return fileSize;
 }
 
-void TextfileTest(const std::string &textname, char print){
- LZ78 lz78;
-
+void TextfileTest(const std::string &textname){
+  LZ78 lz78;
+  std::vector<string> data;
   std::string compressedFileName = lz78.ParseFileName(textname, "");
   std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
 
   lz78.Compress(textname, compressedFileName); 
-  if(print == 'p'){
-    lz78.PrintDict();
-  }
-  lz78.Decompress(compressedFileName, uncompressedFileName);    
+
+  lz78.Decompress(compressedFileName, uncompressedFileName, data);    
 
 
   int compFileSize = GetFileSize(compressedFileName);
@@ -42,7 +40,7 @@ void TextfileTest(const std::string &textname, char print){
 
 int main(int argc, char const *argv[])
 {
-    TextfileTest(argv[1], argv[2][0]);
+    TextfileTest(argv[1]);
     return 0;
 }
 
