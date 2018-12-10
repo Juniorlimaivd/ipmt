@@ -58,6 +58,10 @@ class LZ78 {
 
     }
 
+    /**
+    * @brief Rebuilds the text from the code and saves it in a new text file
+    */
+
     std::string LZ78_Decompress() {
         std::string txt, nextWord;
         std::unordered_map < int, std::string > dict;
@@ -76,6 +80,10 @@ class LZ78 {
 
         return txt;
     }
+
+    /**
+    * @brief Decompresses a given file. It restores the encoded structure
+    */
 
     void Decompress(const std::string & input_filename, const std::string & output_filename) {
 
@@ -96,6 +104,11 @@ class LZ78 {
         txt = LZ78_Decompress();
         out << txt;
     }
+
+    /**
+    * @brief Compresses a given string
+    * 
+    */
 
     void LZ78_Compress(const std::string & txt) {
 
@@ -132,8 +145,12 @@ class LZ78 {
 
     }
 
-    void Compress(const std::string & input_filename,
-        const std::string & output_filename) {
+    /**
+    * @brief Compresses the text from a given text file and creates the .idx compressed file
+    * 
+    */
+
+    void Compress(const std::string & input_filename, const std::string & output_filename) {
 
         std::ifstream in (input_filename.c_str());
         std::string line, txt;
@@ -149,6 +166,9 @@ class LZ78 {
 
     }
 
+    /**
+    * @brief Formats the file name
+    */
     std::string ParseFileName(std::string filename, std::string qualifier) {
 
         filename = filename.substr(0, filename.size() - 4);
