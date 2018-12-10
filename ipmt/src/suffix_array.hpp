@@ -30,10 +30,7 @@ void printArray(std::vector<int> a) {
 class SuffixArray
 {
 private:
-    std::vector<int> _suffixArray;
-    std::string _text;
-    std::vector<int> _leftLCP, _rightLCP;
-    std::vector< std::vector<int> > _prefix;
+
 
     std::vector<int> buildSuffixArray(std::string text) {
         int n = text.size();
@@ -235,11 +232,43 @@ private:
         return left;
     }
 
+    void showLines(int l, int r){
+        int n = _text.size();
+        const char * txt = _text.c_str();
+        int start, line;
+        for (int i = l; i <= r; i++)
+        {
+            start = _suffixArray[i];
+            line = start;
+
+            while (line > 0) {
+                if (txt[line] == '\n') {
+                    line++;
+                    break;
+                }
+                line--;
+            }
+            int end = start;
+            while (end < n) {
+                if (txt[end] == '\n') {
+                    end--;
+                    break;
+                }
+                end++;
+            }
+
+            char* begin;
+            char* fn;
+            strcpy(begin, txt + line);
+            strcpy(fn, txt + end + 1);
+            std::string line(begin, fn);
+            printf("%s\n", line.c_str());
+        }
+    }
+
 public:
     SuffixArray(std::string text) {
-
         _suffixArray = this->buildSuffixArray(text);
-
         _text = text;
         this->buildLR_LCP();
     };
@@ -251,19 +280,22 @@ public:
         _text = text;
     };
 
-    ~SuffixArray() {
+    ~SuffixArray() {};
 
-    };
-
-    int search(std::string pattern) {
+    int search(std::string pattern, bool shouldPrintLines) {
         int l = this->successor(pattern);
         int r = this->predecessor(pattern);
-
-        // std::cout << l << " , " << r << std::endl;
+        
+        if (shouldPrintLines) showLines(l, r);
 
         if (l > r) return 0;
         else return r - l + 1;
     };
+
+    std::vector<int> _suffixArray;
+    std::string _text;
+    std::vector<int> _leftLCP, _rightLCP;
+    std::vector< std::vector<int> > _prefix;
 };
 
 

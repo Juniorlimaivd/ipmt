@@ -3,21 +3,12 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include "searcher.hpp"
 #include "lz78.hpp"
 #include "suffix_array.hpp"
 
-
-
 using namespace std;
-
-enum Algorithm
-{
-      NONE,
-      SUFFIX_TREE,
-      SUFFIX_ARRAY,
-};
-
 
 
 enum Mode {
@@ -36,7 +27,19 @@ typedef struct RunInfo {
 
 vector<string> parserPatternFile(string filename){
       vector<string> p;
-      
+      ifstream file(filename);
+
+      if (file.fail()) {
+            printf("Failed to pattern open file: %s.\n", filename.c_str());
+            exit(0);
+      } else {
+            string pat;
+            while (getline(file, pat)) {
+                  p.push_back(pat);
+            }
+      }
+
+      file.close();
       return p;
 }
 
@@ -49,21 +52,59 @@ void printHelp() {
             "-p, --pattern [pattern_file]\n");
 }
 
-Algorithm chooseAlgorithm(RunInfo info) {
-		return SUFFIX_ARRAY;
+string getText(std::string textfile) {
+      
+      FILE *file = fopen(f.c_str(), "rb");
+      if (file == NULL) {
+            printf("Couldn't read file: %s.", f);
+            exit(0);
+      }
+
+      fseek(file, 0, SEEK_END);
+      int tam = (int)ftell(file);
+      fseek(file, 0, SEEK_SET);
+
+      char *data = new char[tam + 1];
+      data[tam] = '\0';
+      size_t fread_result = fread(data, 1, tam, file);
+      if (fread_result != (size_t) tam) {
+            printf("Couldn't read file");
+            exit(0);
+      }
+      fclose(file);
+      return string(data);
+    
 }
-void indexTextFile (RunInfo info){
+void BuildIndex (RunInfo info){
+      string text = getText(info.textFile);
+      SuffixArray sa(text);
+      
+      string compressed;
 
-LZ78 lz78;
+      // compressed += encode(sa._suffixArray);
+      // compressed += encode(sa._leftLCP);
+      // compressed += encode(sa._leftLCP);
+      // compressed += sa._text;
+      // compressed = encode(compressed);
 
+      string output = info.textFile.substr(0, info.textFile.size() - 4) + ".idx";
 
+      // writeToFile(output);
 }
 
-void decompressAndSearch (RunInfo info){
+void decompressAndSearch(RunInfo info) {
+      string text;
+      vector<int> leftLCP, rightLCP, suffixArray;
 
-LZ78 lz78;
+      // decode here
 
-
+      SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
+      int count;
+      for (int i=0; i < info.patterns.size(); i++) {
+            count = sa.search(info.patterns[i], !info.isCountMode);
+            if (info.isCountMode) printf("Words found: %d\n", count);
+      }
+      
 }
 
 
@@ -108,7 +149,7 @@ int main(int argc, char *argv[])
                         exit(0);
                   }
 
-                  indexTextFile(info);
+                  BuildIndex(info);
                   break;
             }
             case SEARCH: {
