@@ -7,6 +7,7 @@
 #include "searcher.hpp"
 #include "lz78.hpp"
 #include "suffix_array.hpp"
+#include <string.h>
 
 using namespace std;
 
@@ -24,6 +25,34 @@ typedef struct RunInfo {
       bool isCountMode;
       Mode runMode;
 } RunInfo;
+
+string vectorToString(std::vector<int> v) {
+      string s;
+      stringstream ss;
+      int n = v.size();
+      for (int i = 0; i < n; ++i) {
+            ss << (std::to_string(v[i]) + "|");
+      }
+      ss << "%";
+      return ss.str();
+}
+
+vector<int> stringToVector(std::string& s) {
+      int n = s.size();
+      string temp;
+      vector<int> v;
+
+      for (int i = 0; i < n; ++i) {
+            if (s[i] == '|') {
+                  v.push_back(stoll(temp));
+                  temp.clear();
+            } else if (s[i] == '%') {
+                  s = s.substr(i+1);
+                  return;
+            } else temp += s[i];           
+      }
+      return v;
+}
 
 vector<string> parserPatternFile(string filename){
       vector<string> p;
@@ -54,9 +83,9 @@ void printHelp() {
 
 string getText(std::string textfile) {
       
-      FILE *file = fopen(f.c_str(), "rb");
+      FILE *file = fopen(textfile.c_str(), "rb");
       if (file == NULL) {
-            printf("Couldn't read file: %s.", f);
+            printf("Couldn't read file: %s.", textfile);
             exit(0);
       }
 
@@ -78,24 +107,31 @@ string getText(std::string textfile) {
 void BuildIndex (RunInfo info){
       string text = getText(info.textFile);
       SuffixArray sa(text);
-      
-      string compressed;
+      LZ78 lz;
+      stringstream ss;
 
-      // compressed += encode(sa._suffixArray);
-      // compressed += encode(sa._leftLCP);
-      // compressed += encode(sa._leftLCP);
-      // compressed += sa._text;
-      // compressed = encode(compressed);
+      ss << vectorToString(sa._suffixArray);
+      ss << vectorToString(sa._leftLCP);
+      ss << vectorToString(sa._rightLCP);
+      ss << sa._text;
 
-      string output = info.textFile.substr(0, info.textFile.size() - 4) + ".idx";
+      string raw = ss.str();
 
-      // writeToFile(output);
+      lz.LZ78_Compress(raw);
+
+      string outputFile = info.textFile.substr(0, info.textFile.size() - 4) + ".idx";
+
+      lz.WriteToFile(outputFile);
 }
 
 void decompressAndSearch(RunInfo info) {
       string text;
       vector<int> leftLCP, rightLCP, suffixArray;
 
+      LZ78 lz;
+      string compress = getText(info.textFile);
+      
+      
       // decode here
 
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
