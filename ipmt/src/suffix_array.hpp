@@ -221,7 +221,7 @@ private:
 
     void showLines(int l, int r){
         int n = _text.size();
-        int start, line;
+        int start, line, end;
         for (int i = l; i <= r; i++)
         {
             start = _suffixArray[i];
@@ -234,7 +234,7 @@ private:
                 }
                 line--;
             }
-            int end = start;
+            end = start;
             while (end < n) {
                 if (_text[end] == '\n') {
                     end--;
@@ -244,7 +244,7 @@ private:
             }
 
 
-            printf("%s\n", _text.substr(line, end).c_str());
+            printf("%s\n", _text.substr(line, end - line).c_str());
         }
     }
 
