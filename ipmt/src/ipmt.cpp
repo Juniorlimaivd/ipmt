@@ -73,9 +73,9 @@ vector<string> parserPatternFile(string filename){
 }
 
 void printHelp() {
-      printf("Usage: $ pmt mode [options]\n");
-      printf("-i, --index textfile\n"
-            "-s, --search pattern indexfile\n"
+      printf("Usage: $ ipmt mode [options]\n");
+      printf("INDEX: ipmt index textfile\n"
+            "SEARCH: ipmt search pat indexfile\n"
             "-c, --count\n"
             "-h, --help\n"
             "-p, --pattern [pattern_file]\n");
@@ -131,15 +131,12 @@ void decompressAndSearch(RunInfo info) {
       LZ78 lz;
       
       text = lz.Decode(info.textFile);
-      cout << "Here" << std::endl;
-      cout << text << std::endl;
+
       suffixArray = stringToVector(text);
       leftLCP = stringToVector(text);
       rightLCP = stringToVector(text); 
       
-
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
-
       
       int count;
       for (int i=0; i < info.patterns.size(); i++) {

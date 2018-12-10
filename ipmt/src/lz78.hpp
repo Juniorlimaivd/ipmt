@@ -121,7 +121,7 @@ class LZ78 {
         int dict_size, idx, size;
         char chr;
 
-        std::vector < std::pair < int, char >> code;
+        code = std::vector < std::pair < int, char >>();
         in .read(reinterpret_cast < char * > ( & size), sizeof(int)); 
 
         while (! in .eof()) {

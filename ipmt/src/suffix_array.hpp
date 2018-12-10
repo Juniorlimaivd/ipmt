@@ -83,12 +83,6 @@ private:
             suffixArray[_prefix[l][i]] = i;
         }
 
-        // for(int i=0; i < l+1; i++ ) {
-        //     printArray(_prefix[i]);
-        // }
-
-        // printArray(suffixArray);
-
         return suffixArray;
     }
 
@@ -98,8 +92,7 @@ private:
         _rightLCP.assign(n, 0);
         fillLCP(0, n - 1);
 
-        // printArray(_leftLCP);
-        // printArray(_rightLCP);
+
     };
 
     void fillLCP(int left, int right) {
@@ -113,7 +106,6 @@ private:
     }
 
     int lcp_prefix(int left, int right) {
-        // std::cout << "computing lcp i = " << left << " j= " << right << std::endl;
         int n = _text.size();
         if (left == right) return n - left ;
         int lcp = 0;
@@ -154,9 +146,6 @@ private:
             int mid = left + (right - left) / 2;
             int aux = -1;
 
-            // std::cout << "l= " << left << " suf_l " << txt+_suffixArray[left] << std::endl;
-            // std::cout << "h= " << mid << " suf_h " << txt+_suffixArray[mid] << std::endl;
-            // std::cout << "r= " << right << " suf_r " << txt+_suffixArray[right] << std::endl;
             if (l >= r) {
                 if (_leftLCP[mid] >= l) {
                     aux = l + lcp(pat + l, txt + _suffixArray[mid] + l);
@@ -184,7 +173,7 @@ private:
     }
 
     int predecessor(std::string pattern) {
-        // std::cout << "prd" << std::endl;
+
         int m = pattern.size();
         int n = _text.size();
 
@@ -202,9 +191,7 @@ private:
         while (right - left > 1) {
             int mid = left + (right - left) / 2;
             int aux = -1;
-            // std::cout << "l= " << left << " suf_l " << txt+_suffixArray[left] << std::endl;
-            // std::cout << "h= " << mid << " suf_h " << txt+_suffixArray[mid] << std::endl;
-            // std::cout << "r= " << right << " suf_r " << txt+_suffixArray[right] << std::endl;
+
 
             if (l >= r) {
                 if (_leftLCP[mid] >= l) {
@@ -234,7 +221,6 @@ private:
 
     void showLines(int l, int r){
         int n = _text.size();
-        const char * txt = _text.c_str();
         int start, line;
         for (int i = l; i <= r; i++)
         {
@@ -242,7 +228,7 @@ private:
             line = start;
 
             while (line > 0) {
-                if (txt[line] == '\n') {
+                if (_text[line] == '\n') {
                     line++;
                     break;
                 }
@@ -250,19 +236,15 @@ private:
             }
             int end = start;
             while (end < n) {
-                if (txt[end] == '\n') {
+                if (_text[end] == '\n') {
                     end--;
                     break;
                 }
                 end++;
             }
 
-            char* begin;
-            char* fn;
-            strcpy(begin, txt + line);
-            strcpy(fn, txt + end + 1);
-            std::string line(begin, fn);
-            printf("%s\n", line.c_str());
+
+            printf("%s\n", _text.substr(line, end).c_str());
         }
     }
 
@@ -271,9 +253,6 @@ public:
         _suffixArray = this->buildSuffixArray(text);
         _text = text;
         this->buildLR_LCP();
-        printArray(_suffixArray);
-        printArray(_leftLCP);
-        printArray(_rightLCP);
     };
 
     SuffixArray(std::vector<int> suffixArray, std::string text, std::vector<int> leftLCP, std::vector<int> rightLCP) {
@@ -281,18 +260,16 @@ public:
         _leftLCP = leftLCP;
         _rightLCP = rightLCP;
         _text = text;
-
-        printArray(_suffixArray);
-        printArray(_leftLCP);
-        printArray(_rightLCP);
     };
 
     ~SuffixArray() {};
 
     int search(std::string pattern, bool shouldPrintLines) {
+
         int l = this->successor(pattern);
+
         int r = this->predecessor(pattern);
-        
+
         if (shouldPrintLines) showLines(l, r);
 
         if (l > r) return 0;
