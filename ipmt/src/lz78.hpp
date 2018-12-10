@@ -84,7 +84,7 @@ class LZ78 {
     * @brief Decompresses a given file. It restores the encoded structure, it reads first the size of the encoded portion and then decodes it into text
     */
 
-    void Decompress(const std::string & input_filename, const std::string & output_filename, std::vector<std::string> data) {
+    void Decompress(const std::string & input_filename, const std::string & output_filename, std::vector<std::string> &data) {
 
         std::ifstream in (input_filename);
         std::ofstream out(output_filename);
@@ -112,6 +112,33 @@ class LZ78 {
         }
         
         out << fulltxt;
+    }
+
+    std::string Decode(const std::string & input_filename) {
+        std::ifstream in (input_filename);
+
+        std::string txt, fulltxt;
+        int dict_size, idx, size;
+        char chr;
+
+        std::vector < std::pair < int, char >> code;
+        in .read(reinterpret_cast < char * > ( & size), sizeof(int)); 
+
+        while (! in .eof()) {
+      
+            for(int i = 0; i < size; i++) {
+                in .read(reinterpret_cast < char * > ( & idx), sizeof(int)); 
+                in .read( & chr, sizeof(char));
+                code.push_back(std::make_pair(idx, chr));
+            }
+            txt = LZ78_Decompress();
+            fulltxt += txt;
+            in .read(reinterpret_cast < char * > ( & size), sizeof(int)); 
+            code.clear();
+
+        }
+
+        return fulltxt;
     }
 
     /**

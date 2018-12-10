@@ -129,10 +129,13 @@ void decompressAndSearch(RunInfo info) {
       vector<int> leftLCP, rightLCP, suffixArray;
 
       LZ78 lz;
-      string compress = getText(info.textFile);
       
+      text = lz.Decode(info.textFile);
+
+      suffixArray = stringToVector(text);
+      leftLCP = stringToVector(text);
+      rightLCP = stringToVector(text); 
       
-      // decode here
 
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
       int count;
