@@ -48,7 +48,7 @@ vector<int> stringToVector(std::string& s) {
                   temp.clear();
             } else if (s[i] == '%') {
                   s = s.substr(i+1);
-                  return;
+                  return v;
             } else temp += s[i];           
       }
       return v;
@@ -85,7 +85,7 @@ string getText(std::string textfile) {
       
       FILE *file = fopen(textfile.c_str(), "rb");
       if (file == NULL) {
-            printf("Couldn't read file: %s.", textfile);
+            printf("Couldn't read file: %s.", textfile.c_str());
             exit(0);
       }
 
@@ -131,13 +131,16 @@ void decompressAndSearch(RunInfo info) {
       LZ78 lz;
       
       text = lz.Decode(info.textFile);
-
+      cout << "Here" << std::endl;
+      cout << text << std::endl;
       suffixArray = stringToVector(text);
       leftLCP = stringToVector(text);
       rightLCP = stringToVector(text); 
       
 
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
+
+      
       int count;
       for (int i=0; i < info.patterns.size(); i++) {
             count = sa.search(info.patterns[i], !info.isCountMode);
@@ -178,6 +181,8 @@ int main(int argc, char *argv[])
       RunInfo info; 
 
       info.runMode = getMode(argc, argv);
+      optind++;
+      info.patterns.clear();
 
       switch(info.runMode) {
             case INDEX: {
@@ -225,13 +230,14 @@ int main(int argc, char *argv[])
                               }
                         }
                   }
+                  
 
                   int neededArgs = (info.patterns.empty()) ? 2 : 1;
-
+                  
                   if (argc - optind != neededArgs) {
                         printInvalid();
                         exit(1);
-                  }
+                  }    
                   
                   if (info.patterns.size() == 0) 
 

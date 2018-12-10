@@ -271,6 +271,9 @@ public:
         _suffixArray = this->buildSuffixArray(text);
         _text = text;
         this->buildLR_LCP();
+        printArray(_suffixArray);
+        printArray(_leftLCP);
+        printArray(_rightLCP);
     };
 
     SuffixArray(std::vector<int> suffixArray, std::string text, std::vector<int> leftLCP, std::vector<int> rightLCP) {
@@ -278,6 +281,10 @@ public:
         _leftLCP = leftLCP;
         _rightLCP = rightLCP;
         _text = text;
+
+        printArray(_suffixArray);
+        printArray(_leftLCP);
+        printArray(_rightLCP);
     };
 
     ~SuffixArray() {};
