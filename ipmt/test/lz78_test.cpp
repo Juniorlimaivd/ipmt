@@ -1,0 +1,48 @@
+#include "../src/lz78.hpp"
+#include <cstdlib>
+
+using namespace std;
+
+int GetFileSize(std::string fileName){
+
+    ifstream file(fileName.c_str());
+
+    if(!file.is_open())
+    {
+        return -1;
+    }
+
+    file.seekg(0, ios::end);
+    int fileSize = file.tellg();
+    file.close();
+
+    return fileSize;
+}
+
+void TextfileTest(const std::string &textname, char print){
+ LZ78 lz78;
+
+  std::string compressedFileName = lz78.ParseFileName(textname, "");
+  std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
+
+  lz78.Compress(textname, compressedFileName); 
+  if(print == 'p'){
+    lz78.PrintDict();
+  }
+  lz78.Decompress(compressedFileName, uncompressedFileName);    
+
+
+  int compFileSize = GetFileSize(compressedFileName);
+  int origFileSize = GetFileSize(textname); 
+  double ratio = (compFileSize / (double) origFileSize);
+  cout << "Compression ratio is: " << ratio << endl;     
+
+}
+
+
+int main(int argc, char const *argv[])
+{
+    TextfileTest(argv[1], argv[2][0]);
+    return 0;
+}
+
