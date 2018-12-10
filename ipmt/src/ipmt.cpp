@@ -18,14 +18,10 @@ enum Algorithm
       SUFFIX_ARRAY,
 };
 
-enum Compress
-{
-      INVALID,
-      lz78
-};
+
 
 enum Mode {
-      INVALID,
+      invalid,
       INDEX,
       SEARCH
 };
@@ -56,94 +52,20 @@ void printHelp() {
 Algorithm chooseAlgorithm(RunInfo info) {
 		return SUFFIX_ARRAY;
 }
-void BuildIndex (RunInfo info){
+void indexTextFile (RunInfo info){
 
 LZ78 lz78;
 
-for(string textname : info.textFiles) {
-  std::string compressedFileName = lz78.ParseFileName(textname, "");
-  std::string uncompressedFileName = lz78.ParseFileName(textname, UNCOMPRESSED_QUALIFIER);
-
-  lz78.Compress(textname, compressedFileName); 
-  //lz78.Decompress(compressedFileName, uncompressedFileName);         
 
 }
 
-}
+void decompressAndSearch (RunInfo info){
 
-
-void executeAlgorithm(RunInfo info){
-
-      Searcher * s;
-      std::vector<char> alph;
-
-      for (int i = 0; i < 256; i++) {
-            alph.push_back(char(i));
-      }
-
-      switch (info.chosenAlgorithm)
-      {
-            case SUFFIX_ARRAY:{
-                  //s = new SuffixArray(info.patterns[0], alph);
-                  break;
-            }
-            
-      }
-      int i=1;
-      
-      do {
-            for(string textname : info.textFiles) {
-                  ifstream fr(textname);
-
-                  std::stringstream fullline;
-                  
-                  string line;
-
-                  int ret ;
-                  if(ret == -1) continue;
-
-                  int lineCount = 0;
-                  bool countedLine = false, found = false;
-
-                  do {
-                        if(!info.isCountMode) fullline << line;
-
-                        found = s->search(line, ret == 0);
-
-                        if (found && !countedLine) {
-                              lineCount++;
-                              countedLine = true;
-                        }
-
-                        if(ret == 0 && countedLine && !info.isCountMode)
-                              printf("%s\n", fullline.str().c_str());
-                        
-                        if(ret == 0){
-                              fullline.str(std::string());
-                              countedLine = false;
-                        }
-
-                        ret = 0;
-
-                  } while(ret != -1);
-
-                  if (info.isCountMode) {
-
-                        printf("Total occurrences: %d\n", s->count());
-		
-
-                  } else {
-                        printf("Number of lines: %d\n", lineCount);
-                  }
-
-            }
-
-            if(i < info.patterns.size()) s->resetPattern(info.patterns[i]);
-            i++;
-      } while( i <= info.patterns.size());
+LZ78 lz78;
 
 
 }
+
 
 static void printInvalid() {
       printf("Invalid format. --help for more info.\n");
@@ -155,7 +77,7 @@ static void printInvalid() {
       if (argc < 2) {
             printf("Invalid format. --help for more info.\n");
             exit(0);
-            return;
+            return invalid;
       }
 
       if (strcmp(argv[1], "index") == 0) return INDEX;
@@ -163,10 +85,10 @@ static void printInvalid() {
       if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
             printHelp();
             exit(0);
-            return;
+            return invalid;
       }
 
-      return;
+      return invalid;
 }
 
 
