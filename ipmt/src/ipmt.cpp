@@ -26,23 +26,23 @@ typedef struct RunInfo {
       Mode runMode;
 } RunInfo;
 
-string vectorToString(std::vector<int> v) {
+string vectorToString(std::vector<lli> v) {
       string s;
       stringstream ss;
-      int n = v.size();
-      for (int i = 0; i < n; ++i) {
+      lli n = v.size();
+      for (lli i = 0; i < n; ++i) {
             ss << (std::to_string(v[i]) + "|");
       }
       ss << "%";
       return ss.str();
 }
 
-vector<int> stringToVector(std::string& s) {
-      int n = s.size();
+vector<lli> stringToVector(std::string& s) {
+      lli n = s.size();
       string temp;
-      vector<int> v;
+      vector<lli> v;
 
-      for (int i = 0; i < n; ++i) {
+      for (lli i = 0; i < n; ++i) {
             if (s[i] == '|') {
                   v.push_back(stoll(temp));
                   temp.clear();
@@ -106,7 +106,9 @@ string getText(std::string textfile) {
 }
 void BuildIndex (RunInfo info){
       string text = getText(info.textFile);
+
       SuffixArray sa(text);
+
       LZ78 lz;
       stringstream ss;
 
@@ -114,7 +116,7 @@ void BuildIndex (RunInfo info){
       ss << vectorToString(sa._leftLCP);
       ss << vectorToString(sa._rightLCP);
       ss << sa._text;
-
+      
       string raw = ss.str();
 
       lz.LZ78_Compress(raw);
@@ -126,7 +128,7 @@ void BuildIndex (RunInfo info){
 
 void decompressAndSearch(RunInfo info) {
       string text;
-      vector<int> leftLCP, rightLCP, suffixArray;
+      vector<lli> leftLCP, rightLCP, suffixArray;
 
       LZ78 lz;
       
@@ -135,11 +137,13 @@ void decompressAndSearch(RunInfo info) {
       suffixArray = stringToVector(text);
       leftLCP = stringToVector(text);
       rightLCP = stringToVector(text); 
-      
+
+      text = text.substr(0, text.size() - 1);
+
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
       
-      int count;
-      for (int i=0; i < info.patterns.size(); i++) {
+      lli count;
+      for (lli i=0; i < info.patterns.size(); i++) {
             count = sa.search(info.patterns[i], !info.isCountMode);
             if (info.isCountMode) printf("Words found: %d\n", count);
       }
@@ -175,6 +179,7 @@ static void printInvalid() {
 
 int main(int argc, char *argv[])
 {
+      
       RunInfo info; 
 
       info.runMode = getMode(argc, argv);
