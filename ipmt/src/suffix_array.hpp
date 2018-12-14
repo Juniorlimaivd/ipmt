@@ -2,6 +2,8 @@
 #define SUFFIX_ARRAY_H
 
 #include <string>
+#include <cstring>
+#include <algorithm>
 #include <string.h>
 #include <math.h>
 #include <vector>
