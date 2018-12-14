@@ -106,6 +106,7 @@ string getText(std::string textfile) {
 }
 void BuildIndex (RunInfo info){
       string text = getText(info.textFile);
+      std::ofstream temp("temp.idx");
 
       SuffixArray sa(text);
 
@@ -116,14 +117,17 @@ void BuildIndex (RunInfo info){
       ss << vectorToString(sa._leftLCP);
       ss << vectorToString(sa._rightLCP);
       ss << sa._text;
+
       
       string raw = ss.str();
-
+      
       lz.LZ78_Compress(raw);
+
 
       string outputFile = info.textFile.substr(0, info.textFile.size() - 4) + ".idx";
 
       lz.WriteToFile(outputFile);
+
 }
 
 void decompressAndSearch(RunInfo info) {
@@ -138,7 +142,7 @@ void decompressAndSearch(RunInfo info) {
       leftLCP = stringToVector(text);
       rightLCP = stringToVector(text); 
 
-      text = text.substr(0, text.size() - 1);
+      text.pop_back();
 
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
       
