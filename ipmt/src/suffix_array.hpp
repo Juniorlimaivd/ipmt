@@ -268,6 +268,8 @@ public:
         // printArray(suffixArray);
         _leftLCP = leftLCP;
         _rightLCP = rightLCP;
+
+         text.pop_back(); // remove o <0x00> no fim do texto
         _text = text;
     };
 

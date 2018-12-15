@@ -47,12 +47,15 @@ class LZ78 {
 
     void WriteToFile(const std::string & filename) {
 
-        std::ofstream out(filename.c_str());
+        std::ofstream out(filename.c_str(), std::ios::binary);
         int dict_size = code.size();
         out.write(reinterpret_cast < const char * > ( &dict_size), sizeof(int));
         for (int i = 0; i < dict_size; ++i) {
             out.write(reinterpret_cast < const char * > ( & code[i].first), sizeof(int));
             out.write( & code[i].second, sizeof(char));
+            if(i+ 3 > dict_size){
+               std::cout << code[i].first << " " << code[i].second<< std::endl;
+        }
         }
 
     }
@@ -149,7 +152,7 @@ class LZ78 {
     void LZ78_Compress(const std::string & txt) {
 
         std::unordered_map < std::string, int > dict;
-        std::string preffix, emp = "";
+        std::string preffix;
         int idx = 1, codeWordForPreffix;
 
         dict[""] = 0;
@@ -175,7 +178,8 @@ class LZ78 {
         }
         if(!preffix.empty())
         {
-            code.push_back(std::make_pair(dict[preffix], emp[0]));
+            std::cout << preffix << std::endl;
+            code.push_back(std::make_pair(dict[preffix], 0));
         }
 
 

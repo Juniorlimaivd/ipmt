@@ -133,16 +133,13 @@ void BuildIndex (RunInfo info){
 void decompressAndSearch(RunInfo info) {
       string text;
       vector<lli> leftLCP, rightLCP, suffixArray;
-
       LZ78 lz;
       
       text = lz.Decode(info.textFile);
 
       suffixArray = stringToVector(text);
       leftLCP = stringToVector(text);
-      rightLCP = stringToVector(text); 
-
-      text.pop_back();
+      rightLCP = stringToVector(text);       
 
       SuffixArray sa(suffixArray, text, leftLCP, rightLCP);
       
