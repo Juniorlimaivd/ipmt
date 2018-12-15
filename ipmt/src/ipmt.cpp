@@ -106,7 +106,6 @@ string getText(std::string textfile) {
 }
 void BuildIndex (RunInfo info){
       string text = getText(info.textFile);
-      std::ofstream temp("temp.idx");
 
       SuffixArray sa(text);
 
