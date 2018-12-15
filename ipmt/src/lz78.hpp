@@ -53,9 +53,7 @@ class LZ78 {
         for (int i = 0; i < dict_size; ++i) {
             out.write(reinterpret_cast < const char * > ( & code[i].first), sizeof(int));
             out.write( & code[i].second, sizeof(char));
-            if(i+ 3 > dict_size){
-               std::cout << code[i].first << " " << code[i].second<< std::endl;
-        }
+            
         }
 
     }
@@ -178,7 +176,6 @@ class LZ78 {
         }
         if(!preffix.empty())
         {
-            std::cout << preffix << std::endl;
             code.push_back(std::make_pair(dict[preffix], 0));
         }
 
