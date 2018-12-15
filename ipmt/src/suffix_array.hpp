@@ -269,7 +269,9 @@ public:
         _leftLCP = leftLCP;
         _rightLCP = rightLCP;
 
-         text.pop_back(); // remove o <0x00> no fim do texto
+         if(text[text.size()-1] == '\0'){
+            text.pop_back(); // remove o <0x00> no fim do texto
+         }  
         _text = text;
     };
 
